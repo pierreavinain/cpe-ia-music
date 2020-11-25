@@ -1,11 +1,67 @@
-Results ({{completed_count}} completed):<br/>
-- blues: {{r_blues}}%<br/>
-- classical: {{r_classical}}%<br/>
-- country: {{r_country}}%<br/>
-- disco: {{r_disco}}%<br/>
-- hiphop: {{r_hiphop}}%<br/>
-- jazz: {{r_jazz}}%<br/>
-- metal: {{r_metal}}%<br/>
-- pop: {{r_pop}}%<br/>
-- reggae: {{r_reggae}}%<br/>
-- rock: {{r_rock}}%<br/>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CPE IA</title>
+        {% include "style.html" %}
+        <style>
+            #results {
+                display: flex;
+                flex-wrap: wrap;
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+
+            #results div {
+                flex: 1 0 17%;
+            }
+
+            #results div p {
+                margin-top: -18px;
+            }
+        </style>
+    </head>
+    <body>
+        {% include "bubbles.html" %}
+        <div id="main">
+            <br/><br/>
+            <h1 style="margin-bottom: 4vh;">Résultats</h1>
+            <p>Sur 30 musiques, voici tes préférences :</p>
+            <br/><br/>
+
+            <div id="results">
+                <div id="r_blues"></div>
+                <div id="r_classical"></div>
+                <div id="r_country"></div>
+                <div id="r_disco"></div>
+                <div id="r_hiphop"></div>
+                <div id="r_jazz"></div>
+                <div id="r_metal"></div>
+                <div id="r_pop"></div>
+                <div id="r_reggae"></div>
+                <div id="r_rock"></div>
+            </div>
+            {% include "progress.html" %}
+            <script>
+                setProgress('r_blues', 'Blues', 0, {{ r_blues }} / 100.0, `{{ r_blues }}%`);
+                setProgress('r_classical', 'Classical', 0, {{ r_classical }} / 100.0, `{{ r_classical }}%`);
+                setProgress('r_country', 'Country', 0, {{ r_country }} / 100.0, `{{ r_country }}%`);
+                setProgress('r_disco', 'Disco', 0, {{ r_disco }} / 100.0, `{{ r_disco }}%`);
+                setProgress('r_hiphop', 'HipHop', 0, {{ r_hiphop }} / 100.0, `{{ r_hiphop }}%`);
+                setProgress('r_jazz', 'Jazz', 0, {{ r_jazz }} / 100.0, `{{ r_jazz }}%`);
+                setProgress('r_metal', 'Metal', 0, {{ r_metal }} / 100.0, `{{ r_metal }}%`);
+                setProgress('r_pop', 'Pop', 0, {{ r_pop }} / 100.0, `{{ r_pop }}%`);
+                setProgress('r_reggae', 'Reggae', 0, {{ r_reggae }} / 100.0, `{{ r_reggae }}%`);
+                setProgress('r_rock', 'Rock', 0, {{ r_rock }} / 100.0, `{{ r_rock }}%`);
+            </script>
+
+            <br/><br/><br><br>
+            <a href="/" class="neon-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Recommencer le test
+            </a>
+        </div>
+    </body>
+</html>

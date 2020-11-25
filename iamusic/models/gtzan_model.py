@@ -16,10 +16,14 @@ class SingletonMeta(type):
 class GtzanModel(metaclass=SingletonMeta):
     def __init__(self):
         # Read GTZAN csv
-        gtzanData = pd.read_csv('./iamusic/data/gtzan.csv')
+        gtzanData = pd.read_csv('./iamusic/data/gtzan_genres.csv')
+        ytData = pd.read_csv('./iamusic/data/yt_genres.csv')
 
         # Dropping unneccesary columns
-        gtzanData2 = gtzanData.drop(['filename', 'silence'], axis=1)
+        gtzanData2 = pd.concat([
+            gtzanData.drop(['filename', 'silence'], axis=1),
+            ytData.drop(['yt_shortcode'], axis=1)
+        ])
 
         # Encode genres into integers
         self.genre_list = list(np.unique(gtzanData2.iloc[:, -1].to_numpy()))
@@ -27,10 +31,13 @@ class GtzanModel(metaclass=SingletonMeta):
 
         # Split dataset
         gtzanX = np.array(gtzanData2.iloc[:, :-1], dtype = float)
+        gtzanX_train, gtzanX_test, gtzanY_train, gtzanY_test = train_test_split(gtzanX, gtzanY, test_size=0.1)
 
         # Normalize the dataset
         self.scaler = StandardScaler()
-        gtzanX = self.scaler.fit_transform(gtzanX)
+        # gtzanX = self.scaler.fit_transform(gtzanX)
+        gtzanX_train = self.scaler.fit_transform(gtzanX_train)
+        gtzanX_test = self.scaler.transform(gtzanX_test)
 
         # Create the genres model
         self.gtzanModel = models.Sequential()
@@ -41,7 +48,10 @@ class GtzanModel(metaclass=SingletonMeta):
         self.gtzanModel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
         # Train genres model
-        self.gtzanModel.fit(gtzanX, gtzanY, epochs=15, batch_size=128)
+        self.gtzanModel.fit(gtzanX_train, gtzanY_train, epochs=10, batch_size=128, validation_split=0.2)
+
+    def scaler_transform(self, X):
+        return self.scaler.transform(X)
     
     def predict(self, X):
         return self.gtzanModel.predict(self.scaler.transform(X))

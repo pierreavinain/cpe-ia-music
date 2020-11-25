@@ -22,6 +22,7 @@ class UserSession:
 
         # Load all musics data
         self.data = pd.read_csv('./iamusic/data/musics.csv')
+        self.allData = pd.read_csv('./iamusic/data/musics.csv')
         self.yt_shortcodes = list(self.data['yt_shortcode'])
         self.data = self.data.drop(['yt_shortcode'], axis=1)
         self.data['user_preference'] = -1
@@ -46,14 +47,17 @@ class UserSession:
         self.completed_count += 1
 
     def fitUserModel(self):
-        self.model.fit(self.gtzan.scaler.transform(self.userDataX()), self.userDataY(), epochs=3)
+        print(self.userDataY())
+        # Fit model only every 3 points
+        if self.completed_count%3 == 0:
+            self.model.fit(self.gtzan.scaler_transform(self.userDataX()), self.userDataY(), epochs=3)
 
     def nextYtShortcode(self):
         return self.yt_shortcodes[self.next_id]
 
     def generateNextId(self):
         # Finished if completed greater than equal to 30
-        if self.completed_count >= 30:
+        if self.completed_count >= 12:
             self.is_finished = True
 
         # Calibration
@@ -72,18 +76,23 @@ class UserSession:
         # Liked
         else:
             no_preference_data = self.noPreferenceDataX()
-            pred = self.model.predict(self.gtzan.scaler.transform(no_preference_data))
+            pred = self.model.predict(self.gtzan.scaler_transform(no_preference_data))
             should_like = 1
             self.next_id = no_preference_data.index[pred[:,should_like].argmax()]
 
     def getResults(self):
-        genres_stats = self.gtzan.predict(self.gtzan.scaler.transform(self.userLikedDataX()))
+        genres_stats = self.gtzan.predict(self.gtzan.scaler_transform(self.userLikedDataX()))
         total_predictions = len(genres_stats)
-        user_genres = {g: 0 for g in self.gtzan.genre_list}
-        for genre_stats in genres_stats:
-            for i in range(len(genre_stats)):
-                genre = self.gtzan.genre_list[i]
-                user_genres[genre] += float(genre_stats[i]) / float(total_predictions)
 
-        print(user_genres)
+        user_genres = {g: 0 for g in self.gtzan.genre_list}
+        for stat in genres_stats:
+            for i in range(len(stat)):
+                genre = self.gtzan.genre_list[i]
+                user_genres[genre] += float(stat[i]) / float(total_predictions)
+
         return user_genres
+
+    def getNextPrediction(self):
+        d = self.data[self.next_id:self.next_id+1].drop(['user_preference'], axis=1)
+        pred = self.gtzan.predict(self.gtzan.scaler_transform(d))
+        return self.gtzan.genre_list[pred.argmax()]

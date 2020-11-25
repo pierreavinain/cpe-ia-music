@@ -1,4 +1,30 @@
-<h1>Test</h1>
-<form method="POST" action="/new">
-    <button type="submit">Start</button>
-</form>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CPE IA</title>
+        {% include "style.html" %}
+    </head>
+    <body>
+        {% include "bubbles.html" %}
+        <div id="main">
+            <br/><br/>
+            <h1>Découvre tes préférences musicales</h1>
+            <p><small>Projet CPE Lyon IA-DeepLearning 2020, Pierre & Alicia</small></p>
+            <br/>
+
+            <p>30 musiques te seront proposées : les 10 premières sont identiques pour tout le monde,<br/>les 20 suivantes sont personnalisées en fonction de tes choix.</p>
+            <p><strong><u>Réponds OUI si tu ajouterais cette musique dans ta playlist, NON sinon.</u></strong></p>
+            <p><strong>Let's go!</strong></p>
+            
+            <br/><br/>
+            <a href="javascript:document.getElementById('formNew').submit()" class="neon-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Commencer le test !
+            </a>
+            <form method="POST" action="/new" id="formNew"></form>
+        </div>
+    </body>
+</html>

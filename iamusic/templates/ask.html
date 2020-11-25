@@ -1,15 +1,49 @@
-<iframe
-    width="560"
-    height="315"
-    src="https://www.youtube-nocookie.com/embed/{{ yt_shortcode }}?start=60&end=90"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen></iframe>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CPE IA</title>
+        {% include "style.html" %}
+    </head>
+    <body>
+        {% include "bubbles.html" %}
+        <div id="main">
+            <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube-nocookie.com/embed/{{ yt_shortcode }}?start=60&end=90"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>{{pred}}
+            
+                <br/><br/><br/>
+            <div>
+                <a href="javascript:document.getElementById('formNo').submit()" class="neon-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Non...
+                </a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="javascript:document.getElementById('formYes').submit()" class="neon-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Oui !
+                </a>
+            </div>
+            <br/>
+            <br/>
 
-<div>completed {{ completed_count }} of 30</div>
-<form method="POST" action="/submit?session={{ session_id }}&preference=0">
-    <button type="submit">Non</button>
-</form>
-<form method="POST" action="/submit?session={{ session_id }}&preference=1">
-    <button type="submit">Oui</button>
-</form>
+            <div id="progress"></div>
+            {% include "progress.html" %}
+            <script>
+                setProgress('progress', null, {{ completed_count }} / 30, {{ completed_count }} / 30, `{{ completed_count }}/30`);
+            </script>
+            
+            <form method="POST" id="formNo" action="/submit?session={{ session_id }}&preference=0"></form>
+            <form method="POST" id="formYes" action="/submit?session={{ session_id }}&preference=1"></form>
+        </div>
+    </body>
+</html>

@@ -32,8 +32,7 @@ def ask(request):
     return render(request, 'ask.html', {
         'session_id': session_id,
         'yt_shortcode': session.nextYtShortcode(),
-        'completed_count': session.completed_count,
-        'pred': session.getNextPrediction()
+        'completed_count': session.completed_count
     })
 
 # Submit preference

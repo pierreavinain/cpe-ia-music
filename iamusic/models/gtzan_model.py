@@ -3,6 +3,7 @@ from sklearn.preprocessing import StandardScaler
 from keras import models, layers
 import pandas as pd
 import numpy as np
+import sys
 
 class SingletonMeta(type):
     _instances = {}
@@ -21,7 +22,7 @@ class GtzanModel(metaclass=SingletonMeta):
 
         # Dropping unneccesary columns
         gtzanData2 = pd.concat([
-            gtzanData.drop(['filename', 'silence'], axis=1),
+            # gtzanData.drop(['filename', 'silence'], axis=1),
             ytData.drop(['yt_shortcode'], axis=1)
         ])
 
@@ -31,7 +32,7 @@ class GtzanModel(metaclass=SingletonMeta):
 
         # Split dataset
         gtzanX = np.array(gtzanData2.iloc[:, :-1], dtype = float)
-        gtzanX_train, gtzanX_test, gtzanY_train, gtzanY_test = train_test_split(gtzanX, gtzanY, test_size=0.1)
+        gtzanX_train, gtzanX_test, gtzanY_train, gtzanY_test = train_test_split(gtzanX, gtzanY, test_size=0.01)
 
         # Normalize the dataset
         self.scaler = StandardScaler()
@@ -50,8 +51,15 @@ class GtzanModel(metaclass=SingletonMeta):
         # Train genres model
         self.gtzanModel.fit(gtzanX_train, gtzanY_train, epochs=10, batch_size=128, validation_split=0.2)
 
+        # Test with YTDATA
+        print("------ TEST WITH YT DATA -------")
+        ytData2 = ytData.drop(['yt_shortcode'], axis=1)
+        ytDataX = self.scaler.fit_transform(np.array(ytData2.iloc[:, :-1], dtype = float))
+        ytDataY = np.array([self.genre_list.index(g) for g in ytData2.iloc[:, -1]])
+        test_loss, test_acc = self.gtzanModel.evaluate(ytDataX[0:10], ytDataY[0:10])
+
     def scaler_transform(self, X):
         return self.scaler.transform(X)
     
     def predict(self, X):
-        return self.gtzanModel.predict(self.scaler.transform(X))
+        return self.gtzanModel.predict(X)

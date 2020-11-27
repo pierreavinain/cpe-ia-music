@@ -47,7 +47,6 @@ class UserSession:
         self.completed_count += 1
 
     def fitUserModel(self):
-        print(self.userDataY())
         # Fit model only every 3 points
         if self.completed_count%3 == 0:
             self.model.fit(self.gtzan.scaler_transform(self.userDataX()), self.userDataY(), epochs=3)
@@ -57,7 +56,7 @@ class UserSession:
 
     def generateNextId(self):
         # Finished if completed greater than equal to 30
-        if self.completed_count >= 12:
+        if self.completed_count >= 30:
             self.is_finished = True
 
         # Calibration
@@ -93,6 +92,7 @@ class UserSession:
         return user_genres
 
     def getNextPrediction(self):
-        d = self.data[self.next_id:self.next_id+1].drop(['user_preference'], axis=1)
-        pred = self.gtzan.predict(self.gtzan.scaler_transform(d))
+        df = self.data[self.next_id:self.next_id+1].drop(['user_preference'], axis=1)
+        tf = self.gtzan.scaler_transform(df)
+        pred = self.gtzan.predict(tf)[0]
         return self.gtzan.genre_list[pred.argmax()]
